@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador Congruencial Lineal - LCG</title>
+    <link rel="icon" type="image/png" href="logo cis.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #e2e8f0;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: var(--dark);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--gray);
+        }
+        .card-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            margin-bottom: 8px;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.875em;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        input[type="number"]::placeholder {
+            color: var(--secondary);
+        }
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 8px;
+            padding: 16px;
+            background: var(--light);
+            border-radius: 10px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0;
+        }
+        .radio-group input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            accent-color: var(--primary);
+        }
+        .formula-display {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.25em;
+            font-weight: 500;
+            margin-bottom: 24px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+        }
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .alert-warning {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        .alert-success {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .alert-info {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .result-item {
+            background: var(--light);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 0.8em;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        .result-value {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .result-value.highlight {
+            color: var(--primary);
+        }
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 2px solid var(--gray);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray);
+        }
+        th {
+            background: var(--dark);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.05em;
+        }
+        tr:hover {
+            background: var(--light);
+        }
+        tr.highlight {
+            background: #fef3c7;
+        }
+        tr.highlight td {
+            font-weight: 600;
+        }
+        td {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-binary {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge-decimal {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador Congruencial Lineal</h1>
+        <p class="subtitle">Método de Generación de Números Pseudoaleatorios</p>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Parámetros del Algoritmo</h2>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Tipo de Algoritmo</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="tipo" value="mixto" checked>
+                            Mixto: X(n+1) = (a × X(n) + c) mod m
+                        </label>
+                        <label>
+                            <input type="radio" name="tipo" value="multiplicativo">
+                            Multiplicativo: X(n+1) = (a × X(n)) mod m
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="x0">X₀ (Semilla Inicial)</label>
+                    <input type="number" id="x0" placeholder="Ej: 5">
+                </div>
+
+                <div class="form-group">
+                    <label for="a">a (Multiplicador)</label>
+                    <input type="number" id="a" placeholder="Ej: 3">
+                </div>
+
+                <div class="form-group">
+                    <label for="m">m (Módulo)</label>
+                    <input type="number" id="m" placeholder="Ej: 8">
+                </div>
+
+                <div class="form-group">
+                    <label for="c">c (Constante Aditiva)</label>
+                    <input type="number" id="c" placeholder="Ej: 0">
+                </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generar()">Generar Secuencia</button>
+                    <button class="btn btn-success" onclick="exportarPDF()" id="btnExportar" disabled>Exportar PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mensajes"></div>
+
+        <div class="card hidden" id="resultados">
+            <div class="card-header">
+                <h2 class="card-title">Resultados</h2>
+            </div>
+
+            <div class="formula-display" id="formulaMostrada"></div>
+
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-label">Tipo</div>
+                    <div class="result-value" id="resTipo"></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Representación</div>
+                    <div class="result-value"><span class="badge" id="resRepresentacion"></span></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Iteraciones</div>
+                    <div class="result-value" id="resIteraciones"></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Tiempo de Vida</div>
+                    <div class="result-value highlight" id="resTiempoVida"></div>
+                </div>
+            </div>
+
+            <div class="alert alert-info" id="resExplicacion"></div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>n</th>
+                            <th>X(n)</th>
+                            <th>U = X(n)/m</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCuerpo"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sequence = [];
+        let params = {};
+        let tiempoDeVida = null;
+        let periodoIndex = null;
+
+        function isPowerOfTwo(n) {
+            if (n <= 0) return false;
+            return (n & (n - 1)) === 0;
+        }
+
+        function detectPowerOfTwoExponent(n) {
+            if (!isPowerOfTwo(n)) return null;
+            let exp = 0;
+            while (n > 1) {
+                n = Math.floor(n / 2);
+                exp++;
+            }
+            return exp;
+        }
+
+        function isPrime(n) {
+            if (n <= 1) return false;
+            if (n <= 3) return true;
+            if (n % 2 === 0 || n % 3 === 0) return false;
+            for (let i = 5; i * i <= n; i += 6) {
+                if (n % i === 0 || n % (i + 2) === 0) return false;
+            }
+            return true;
+        }
+
+        function getBinaryDecimalClassification(m) {
+            const exp = detectPowerOfTwoExponent(m);
+            if (exp !== null) {
+                return {
+                    tipo: 'binario',
+                    mensaje: `m = ${m} = 2^${exp}`,
+                    clase: 'badge-binary',
+                    explicacion: 'Como m es potencia de 2, el algoritmo puede representarse eficientemente en binario usando operaciones de desplazamiento de bits.'
+                };
+            } else if (isPrime(m)) {
+                return {
+                    tipo: 'decimal',
+                    mensaje: `m = ${m} (primo)`,
+                    clase: 'badge-decimal',
+                    explicacion: 'Los números primos dan período máximo (m-1) con constantes apropiadas según el teorema de Hull-Dobell.'
+                };
+            } else {
+                return {
+                    tipo: 'decimal',
+                    mensaje: `m = ${m}`,
+                    clase: 'badge-decimal',
+                    explicacion: 'El período máximo depende de las constantes elegidas. Para mejor resultado, use m primo.'
+                };
+            }
+        }
+
+        function validarParametros() {
+            const tipo = document.querySelector('input[name="tipo"]:checked').value;
+            const x0 = parseInt(document.getElementById('x0').value);
+            const a = parseInt(document.getElementById('a').value);
+            const m = parseInt(document.getElementById('m').value);
+            const c = parseInt(document.getElementById('c').value);
+            const errores = [];
+
+            if (isNaN(m) || m <= 0) {
+                errores.push('✗ Error: m debe ser mayor que 0. Justificación: el módulo debe ser positivo para que la operación módulo esté definida.');
+            }
+
+            if (isNaN(x0)) {
+                errores.push('✗ Error: X₀ es requerido.');
+            } else if (!isNaN(m) && m > 0 && x0 >= m) {
+                errores.push('✗ Error: X₀ debe ser menor que m. Justificación: X₀ y a deben ser menores que m para período máximo.');
+            }
+
+            if (isNaN(a)) {
+                errores.push('✗ Error: a es requerido.');
+            } else if (!isNaN(m) && m > 0 && a >= m) {
+                errores.push('✗ Error: a debe ser menor que m. Justificación: X₀ y a deben ser menores que m para período máximo.');
+            }
+
+            if (tipo === 'multiplicativo') {
+                if (!isNaN(c) && c !== 0) {
+                    errores.push('✗ Error: en modo multiplicativo, c debe ser 0. Justificación: el método multiplicativo usa c=0 por definición.');
+                }
+            }
+
+            return errores;
+        }
+
+        function validarConAdvertencias() {
+            const warnings = [];
+            const tipo = document.querySelector('input[name="tipo"]:checked').value;
+            const x0 = parseInt(document.getElementById('x0').value);
+            const a = parseInt(document.getElementById('a').value);
+            const m = parseInt(document.getElementById('m').value);
+
+            if (!isNaN(m) && m > 0) {
+                const clasif = getBinaryDecimalClassification(m);
+                if (clasif.tipo === 'decimal' && !isPrime(m)) {
+                    warnings.push('⚠ Advertencia: m no es primo ni potencia de 2. El período no será máximo.');
+                }
+            }
+
+            if (!isNaN(x0) && !isNaN(m) && x0 >= m) {
+                warnings.push('⚠ Advertencia: X₀ debe ser menor que m para período máximo.');
+            }
+
+            if (!isNaN(a) && !isNaN(m) && a >= m) {
+                warnings.push('⚠ Advertencia: a debe ser menor que m para período máximo.');
+            }
+
+            return warnings;
+        }
+
+        function generar() {
+            const errores = validarParametros();
+            const mensajesDiv = document.getElementById('mensajes');
+            mensajesDiv.innerHTML = '';
+
+            if (errores.length > 0) {
+                mensajesDiv.innerHTML = '<div class="alert alert-error">' + errores.join('<br>') + '</div>';
+                document.getElementById('resultados').classList.add('hidden');
+                return;
+            }
+
+            const warnings = validarConAdvertencias();
+            if (warnings.length > 0) {
+                mensajesDiv.innerHTML = '<div class="alert alert-warning">' + warnings.join('<br>') + '</div>';
+            } else {
+                mensajesDiv.innerHTML = '';
+            }
+
+            const tipo = document.querySelector('input[name="tipo"]:checked').value;
+            let x0 = BigInt(document.getElementById('x0').value);
+            const a = BigInt(document.getElementById('a').value);
+            const m = BigInt(document.getElementById('m').value);
+            let c = BigInt(document.getElementById('c').value);
+
+            if (tipo === 'multiplicativo') {
+                c = BigInt(0);
+            }
+
+            params = { tipo, x0: Number(x0), a: Number(a), m: Number(m), c: Number(c) };
+
+            const clasif = getBinaryDecimalClassification(Number(m));
+
+            sequence = [Number(x0)];
+            const seen = new Set([Number(x0)]);
+            tiempoDeVida = null;
+            periodoIndex = null;
+            const maxIterations = 10000;
+
+            for (let i = 1; i < maxIterations; i++) {
+                let next = (a * x0 + c) % m;
+                x0 = next;
+
+                if (seen.has(Number(next))) {
+                    tiempoDeVida = i;
+                    periodoIndex = i - 1;
+                    sequence.push(Number(next));
+                    break;
+                }
+
+                seen.add(Number(next));
+                sequence.push(Number(next));
+
+                if (i >= maxIterations - 1) {
+                    tiempoDeVida = maxIterations;
+                }
+            }
+
+            const formulaText = tipo === 'mixto'
+                ? `X(n+1) = (${a} × X(n) + ${c}) mod ${m}`
+                : `X(n+1) = (${a} × X(n)) mod ${m}`;
+
+            document.getElementById('formulaMostrada').textContent = formulaText;
+            document.getElementById('resTipo').textContent = tipo === 'mixto' ? 'Mixto' : 'Multiplicativo';
+            document.getElementById('resRepresentacion').textContent = clasif.mensaje;
+            document.getElementById('resRepresentacion').className = 'badge ' + clasif.clase;
+            document.getElementById('resIteraciones').textContent = sequence.length;
+            document.getElementById('resTiempoVida').textContent = tiempoDeVida ? `${tiempoDeVida} iteraciones` : 'N/A';
+            document.getElementById('resExplicacion').textContent = clasif.explicacion;
+
+            let tablaHTML = '';
+            for (let i = 0; i < sequence.length; i++) {
+                const u = sequence[i] / params.m;
+                const isRepeat = tiempoDeVida !== null && i >= periodoIndex && i > 0;
+                tablaHTML += `<tr class="${isRepeat ? 'highlight' : ''}">
+                    <td>${i}</td>
+                    <td>${sequence[i]}</td>
+                    <td>${u.toFixed(6)}</td>
+                </tr>`;
+            }
+            document.getElementById('tablaCuerpo').innerHTML = tablaHTML;
+
+            document.getElementById('resultados').classList.remove('hidden');
+            document.getElementById('btnExportar').disabled = false;
+
+            mensajesDiv.innerHTML += '<div class="alert alert-success">✓ Generación completada. Se generaron ' + sequence.length + ' valores.</div>';
+        }
+
+        function exportarPDF() {
+            if (sequence.length === 0) {
+                alert('Debe ejecutar el algoritmo primero');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+
+            doc.setFillColor(15, 23, 42);
+            doc.rect(0, 0, pageWidth, 40, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Generador Congruencial Lineal', pageWidth / 2, 20, { align: 'center' });
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Método de Generación de Números Pseudoaleatorios', pageWidth / 2, 30, { align: 'center' });
+
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Parámetros', 20, 55);
+
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.5);
+            doc.line(20, 58, pageWidth - 20, 58);
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            const clasif = getBinaryDecimalClassification(params.m);
+
+            const paramsData = [
+                ['Tipo de Algoritmo', params.tipo === 'mixto' ? 'Mixto' : 'Multiplicativo'],
+                ['X₀ (Semilla)', params.x0.toString()],
+                ['a (Multiplicador)', params.a.toString()],
+                ['m (Módulo)', params.m.toString()],
+                ['c (Constante)', params.c.toString()],
+                ['Representación', clasif.mensaje],
+                ['Iteraciones', sequence.length.toString()],
+                ['Tiempo de Vida', tiempoDeVida ? `${tiempoDeVida} iteraciones` : 'N/A']
+            ];
+
+            let yPos = 68;
+            paramsData.forEach(([label, value]) => {
+                doc.setFont('helvetica', 'bold');
+                doc.text(label + ':', 25, yPos);
+                doc.setFont('helvetica', 'normal');
+                doc.text(value, 80, yPos);
+                yPos += 8;
+            });
+
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Secuencia Generada', 20, yPos + 10);
+            doc.line(20, yPos + 13, pageWidth - 20, yPos + 13);
+
+            const tableData = sequence.map((val, i) => [i, val, (val / params.m).toFixed(6)]);
+
+            doc.autoTable({
+                startY: yPos + 18,
+                head: [['n', 'X(n)', 'U = X(n)/m']],
+                body: tableData,
+                theme: 'striped',
+                headStyles: {
+                    fillColor: [30, 41, 59],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 9
+                },
+                bodyStyles: {
+                    fontSize: 8
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 250, 252]
+                },
+                columnStyles: {
+                    0: { cellWidth: 20, halign: 'center' },
+                    1: { cellWidth: 30, halign: 'right' },
+                    2: { cellWidth: 40, halign: 'right' }
+                },
+                margin: { left: 20, right: 20 }
+            });
+
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139);
+            doc.text('Generadopor Congruencial Lineal - LCG', pageWidth / 2, 285, { align: 'center' });
+
+            doc.save('generador-congruencial-lineal.pdf');
+        }
+
+        document.querySelectorAll('input[name="tipo"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const cInput = document.getElementById('c');
+                if (radio.value === 'multiplicativo') {
+                    cInput.value = '0';
+                    cInput.disabled = true;
+                } else {
+                    cInput.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
