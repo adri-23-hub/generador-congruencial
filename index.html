@@ -681,7 +681,11 @@
             const finalY = doc.lastAutoTable.finalY + 10;
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text('Generadopor Congruencial Lineal - LCG', pageWidth / 2, 285, { align: 'center' });
+            doc.text('Generado por Congruencial Lineal - LCG', pageWidth / 2, 285, { align: 'center' });
+
+            doc.setFontSize(10);
+            doc.setTextColor(37, 99, 235);
+            doc.text('Estudiante: Adrian Coimbra', pageWidth / 2, 292, { align: 'center' });
 
             doc.save('generador-congruencial-lineal.pdf');
         }
