@@ -540,9 +540,9 @@
             const seen = new Set([Number(x0)]);
             tiempoDeVida = null;
             periodoIndex = null;
-            const maxIterations = 10000;
+            let i = 1;
 
-            for (let i = 1; i < maxIterations; i++) {
+            while (true) {
                 let next = (a * x0 + c) % m;
                 x0 = next;
 
@@ -555,10 +555,7 @@
 
                 seen.add(Number(next));
                 sequence.push(Number(next));
-
-                if (i >= maxIterations - 1) {
-                    tiempoDeVida = maxIterations;
-                }
+                i++;
             }
 
             const formulaText = tipo === 'mixto'
