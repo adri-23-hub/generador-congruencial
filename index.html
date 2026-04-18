@@ -676,14 +676,10 @@
                     2: { cellWidth: 40, halign: 'right' }
                 },
                 didParseCell: function(data) {
-                    if (repeatIndex !== null && data.row.index === repeatIndex) {
-                        return {
-                            styles: {
-                                fillColor: [220, 252, 231],
-                                textColor: [22, 101, 52],
-                                fontStyle: 'bold'
-                            }
-                        };
+                    if (data.section === 'body' && repeatIndex !== null && data.row.index === repeatIndex) {
+                        data.cell.styles.fillColor = [220, 252, 231];
+                        data.cell.styles.textColor = [22, 101, 52];
+                        data.cell.styles.fontStyle = 'bold';
                     }
                 },
                 margin: { left: (pageWidth - 90) / 2 }
