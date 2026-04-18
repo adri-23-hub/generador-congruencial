@@ -709,7 +709,7 @@
             doc.text('¿Por qué puede resolverse así?', 25, yPos + 12);
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
-            const paramValues = `X₀=${params.x0}, a=${params.a}, m=${params.m}, c=${params.c}`;
+            const paramValues = `m=${params.m}, c=${params.c}`;
             const fullExplain = `${paramValues}. ${clasif.explicacion}`;
             const explainLines = doc.splitTextToSize(fullExplain, pageWidth - 50);
             doc.text(explainLines, 25, yPos + 18);
