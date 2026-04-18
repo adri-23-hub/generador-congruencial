@@ -574,7 +574,7 @@
             let tablaHTML = '';
             for (let i = 0; i < sequence.length; i++) {
                 const u = sequence[i] / params.m;
-                const isRepeat = tiempoDeVida !== null && i === periodoIndex;
+                const isRepeat = tiempoDeVida !== null && i === periodoIndex + 1;
                 tablaHTML += `<tr class="${isRepeat ? 'highlight' : ''}">
                     <td>${i}</td>
                     <td>${sequence[i]}</td>
@@ -651,6 +651,16 @@
 
             const tableData = sequence.map((val, i) => [i, val, (val / params.m).toFixed(6)]);
 
+            const repeatIndex = periodoIndex !== null ? periodoIndex + 1 : null;
+            const didParseStyles = {};
+            if (repeatIndex !== null) {
+                didParseStyles[repeatIndex] = {
+                    fillColor: [220, 252, 231],
+                    textColor: [22, 101, 52],
+                    fontStyle: 'bold'
+                };
+            }
+
             doc.autoTable({
                 startY: yPos + 18,
                 head: [['n', 'X(n)', 'U = X(n)/m']],
@@ -673,7 +683,8 @@
                     1: { cellWidth: 30, halign: 'right' },
                     2: { cellWidth: 40, halign: 'right' }
                 },
-                margin: { left: 20, right: 20 }
+                didParseStyles: didParseStyles,
+                margin: { left: (pageWidth - 90) / 2 }
             });
 
             const finalY = doc.lastAutoTable.finalY + 10;
