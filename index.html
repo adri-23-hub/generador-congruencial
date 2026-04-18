@@ -652,14 +652,6 @@
             const tableData = sequence.map((val, i) => [i, val, (val / params.m).toFixed(6)]);
 
             const repeatIndex = periodoIndex !== null ? periodoIndex + 1 : null;
-            const didParseStyles = {};
-            if (repeatIndex !== null) {
-                didParseStyles[repeatIndex] = {
-                    fillColor: [220, 252, 231],
-                    textColor: [22, 101, 52],
-                    fontStyle: 'bold'
-                };
-            }
 
             doc.autoTable({
                 startY: yPos + 18,
@@ -683,7 +675,17 @@
                     1: { cellWidth: 30, halign: 'right' },
                     2: { cellWidth: 40, halign: 'right' }
                 },
-                didParseStyles: didParseStyles,
+                didParseCell: function(data) {
+                    if (repeatIndex !== null && data.row.index === repeatIndex) {
+                        return {
+                            styles: {
+                                fillColor: [220, 252, 231],
+                                textColor: [22, 101, 52],
+                                fontStyle: 'bold'
+                            }
+                        };
+                    }
+                },
                 margin: { left: (pageWidth - 90) / 2 }
             });
 
