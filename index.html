@@ -656,7 +656,7 @@
             doc.text('¿Por qué puede resolverse así?', 25, yPos + 12);
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
-            const explainLines = doc.splitTextToWidth(clasif.explicacion, pageWidth - 50);
+            const explainLines = doc.splitTextToSize(clasif.explicacion, pageWidth - 50);
             doc.text(explainLines, 25, yPos + 18);
             yPos += 30 + (explainLines.length * 4);
 
