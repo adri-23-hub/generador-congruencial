@@ -590,13 +590,17 @@
         }
 
         function exportarPDF() {
+            console.log('Exportando PDF...');
+            try {
             if (sequence.length === 0) {
                 alert('Debe ejecutar el algoritmo primero');
                 return;
             }
 
             const { jsPDF } = window.jspdf;
+            console.log('jsPDF:', jsPDF);
             const doc = new jsPDF();
+            console.log('Doc created');
             const pageWidth = doc.internal.pageSize.getWidth();
 
             doc.setFillColor(15, 23, 42);
@@ -706,7 +710,13 @@
             doc.setTextColor(37, 99, 235);
             doc.text('Estudiante: Adrian Coimbra', pageWidth / 2, 292, { align: 'center' });
 
+            console.log('Saving PDF...');
             doc.save('generador-congruencial-lineal.pdf');
+            console.log('PDF saved successfully');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                alert('Error al exportar PDF: ' + error.message);
+            }
         }
 
         document.querySelectorAll('input[name="tipo"]').forEach(radio => {
