@@ -623,32 +623,32 @@
             doc.setTextColor(30, 41, 59);
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
-            doc.text('Fórmula Generada', 20, 52);
+            doc.text('Fórmula Generada', pageWidth / 2, 52, { align: 'center' });
 
             doc.setDrawColor(226, 232, 240);
             doc.setLineWidth(0.5);
             doc.line(20, 55, pageWidth - 20, 55);
 
             doc.setFillColor(30, 58, 122);
-            doc.roundedRect(20, 60, pageWidth - 40, 18, 2, 2, 'F');
+            doc.roundedRect(20, 58, pageWidth - 40, 16, 2, 2, 'F');
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(12);
+            doc.setFontSize(11);
             doc.setFont('courier', 'bold');
-            doc.text(formulaText, pageWidth / 2, 72, { align: 'center' });
+            doc.text(formulaText, pageWidth / 2, 69, { align: 'center' });
 
             doc.setTextColor(30, 41, 59);
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
-            doc.text('Parámetros', 20, 90);
+            doc.text('Parámetros', pageWidth / 2, 86, { align: 'center' });
 
             doc.setDrawColor(226, 232, 240);
-            doc.line(20, 93, pageWidth - 20, 93);
+            doc.line(20, 89, pageWidth - 20, 89);
 
             doc.setFillColor(248, 250, 252);
-            doc.roundedRect(18, 96, pageWidth - 36, 76, 3, 3, 'F');
+            doc.roundedRect(18, 92, pageWidth - 36, 72, 3, 3, 'F');
             doc.setDrawColor(203, 213, 225);
             doc.setLineWidth(0.5);
-            doc.roundedRect(18, 96, pageWidth - 36, 76, 3, 3, 'S');
+            doc.roundedRect(18, 92, pageWidth - 36, 72, 3, 3, 'S');
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
@@ -665,13 +665,13 @@
                 ['Tiempo de Vida', tiempoDeVida ? `${tiempoDeVida} iteraciones` : 'N/A']
             ];
 
-            let yPos = 108;
+            let yPos = 100;
             paramsData.forEach(([label, value]) => {
                 doc.setFont('helvetica', 'bold');
                 doc.text(label + ':', 25, yPos);
                 doc.setFont('helvetica', 'normal');
-                doc.text(value, 85, yPos);
-                yPos += 9;
+                doc.text(value, 90, yPos);
+                yPos += 8;
             });
 
             doc.setFillColor(220, 252, 231);
