@@ -261,10 +261,11 @@
             background: var(--light);
         }
         tr.highlight {
-            background: #fef3c7;
+            background: #dcfce7;
         }
         tr.highlight td {
             font-weight: 600;
+            color: #166534;
         }
         td {
             font-family: 'JetBrains Mono', monospace;
@@ -573,7 +574,7 @@
             let tablaHTML = '';
             for (let i = 0; i < sequence.length; i++) {
                 const u = sequence[i] / params.m;
-                const isRepeat = tiempoDeVida !== null && i >= periodoIndex && i > 0;
+                const isRepeat = tiempoDeVida !== null && i === periodoIndex;
                 tablaHTML += `<tr class="${isRepeat ? 'highlight' : ''}">
                     <td>${i}</td>
                     <td>${sequence[i]}</td>
