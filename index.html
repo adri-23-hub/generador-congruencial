@@ -616,13 +616,39 @@
             doc.text('Método de Generación de Números Pseudoaleatorios', pageWidth / 2, 30, { align: 'center' });
 
             doc.setTextColor(30, 41, 59);
-            doc.setFontSize(12);
+
+            const formulaText = params.tipo === 'mixto'
+                ? `X(n+1) = (${params.a} × X(n) + ${params.c}) mod ${params.m}`
+                : `X(n+1) = (${params.a} × X(n)) mod ${params.m}`;
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
-            doc.text('Parámetros', 20, 55);
+            doc.text('Fórmula Generada', 20, 52);
 
             doc.setDrawColor(226, 232, 240);
             doc.setLineWidth(0.5);
-            doc.line(20, 58, pageWidth - 20, 58);
+            doc.line(20, 55, pageWidth - 20, 55);
+
+            doc.setFillColor(30, 58, 122);
+            doc.roundedRect(20, 60, pageWidth - 40, 18, 2, 2, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(12);
+            doc.setFont('courier', 'bold');
+            doc.text(formulaText, pageWidth / 2, 72, { align: 'center' });
+
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Parámetros', 20, 90);
+
+            doc.setDrawColor(226, 232, 240);
+            doc.line(20, 93, pageWidth - 20, 93);
+
+            doc.setFillColor(241, 245, 249);
+            doc.roundedRect(18, 98, pageWidth - 36, 55, 3, 3, 'F');
+            doc.setDrawColor(203, 213, 225);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(18, 98, pageWidth - 36, 55, 3, 3, 'S');
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
@@ -639,12 +665,12 @@
                 ['Tiempo de Vida', tiempoDeVida ? `${tiempoDeVida} iteraciones` : 'N/A']
             ];
 
-            let yPos = 68;
+            let yPos = 106;
             paramsData.forEach(([label, value]) => {
                 doc.setFont('helvetica', 'bold');
                 doc.text(label + ':', 25, yPos);
                 doc.setFont('helvetica', 'normal');
-                doc.text(value, 80, yPos);
+                doc.text(value, 85, yPos);
                 yPos += 8;
             });
 
