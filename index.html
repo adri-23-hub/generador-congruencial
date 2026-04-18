@@ -421,29 +421,56 @@
             return true;
         }
 
-        function getBinaryDecimalClassification(m) {
+        function getBinaryDecimalClassification(m, tipo) {
             const exp = detectPowerOfTwoExponent(m);
             if (exp !== null) {
-                return {
-                    tipo: 'binario',
-                    mensaje: `m = ${m} = 2^${exp}`,
-                    clase: 'badge-binary',
-                    explicacion: 'Como m es potencia de 2, el algoritmo puede representarse eficientemente en binario usando operaciones de desplazamiento de bits.'
-                };
+                if (tipo === 'mixto') {
+                    return {
+                        tipo: 'binario',
+                        mensaje: `m = ${m} = 2^${exp}`,
+                        clase: 'badge-binary',
+                        explicacion: 'Se logra período completo (m) porque c es primo relativo de m, y (a-1) es múltiplo de los factores primos de m.'
+                    };
+                } else {
+                    return {
+                        tipo: 'binario',
+                        mensaje: `m = ${m} = 2^${exp}`,
+                        clase: 'badge-binary',
+                        explicacion: 'El período máximo es m/4 porque el valor Xn nunca puede ser cero.'
+                    };
+                }
             } else if (isPrime(m)) {
-                return {
-                    tipo: 'decimal',
-                    mensaje: `m = ${m} (primo)`,
-                    clase: 'badge-decimal',
-                    explicacion: 'Los números primos dan período máximo (m-1) con constantes apropiadas según el teorema de Hull-Dobell.'
-                };
+                if (tipo === 'mixto') {
+                    return {
+                        tipo: 'decimal',
+                        mensaje: `m = ${m} (primo)`,
+                        clase: 'badge-decimal',
+                        explicacion: 'Se logra período completo (m) porque c es primo relativo de m, y (a-1) es múltiplo de los factores primos de m.'
+                    };
+                } else {
+                    return {
+                        tipo: 'decimal',
+                        mensaje: `m = ${m} (primo)`,
+                        clase: 'badge-decimal',
+                        explicacion: 'El período máximo es m-1 cuando a es raíz primitiva módulo m.'
+                    };
+                }
             } else {
-                return {
-                    tipo: 'decimal',
-                    mensaje: `m = ${m}`,
-                    clase: 'badge-decimal',
-                    explicacion: 'El período máximo depende de las constantes elegidas. Para mejor resultado, use m primo.'
-                };
+                if (tipo === 'mixto') {
+                    return {
+                        tipo: 'decimal',
+                        mensaje: `m = ${m}`,
+                        clase: 'badge-decimal',
+                        explicacion: 'Se logra período completo (m) porque c es primo relativo de m, y (a-1) es múltiplo de los factores primos de m.'
+                    };
+                } else {
+                    return {
+                        tipo: 'decimal',
+                        mensaje: `m = ${m}`,
+                        clase: 'badge-decimal',
+                        explicacion: 'El período máximo depende de las constantes elegidas. Para mejor resultado, use m primo.'
+                    };
+                }
             }
         }
 
@@ -488,7 +515,7 @@
             const m = parseInt(document.getElementById('m').value);
 
             if (!isNaN(m) && m > 0) {
-                const clasif = getBinaryDecimalClassification(m);
+                const clasif = getBinaryDecimalClassification(m, tipo);
                 if (clasif.tipo === 'decimal' && !isPrime(m)) {
                     warnings.push('⚠ Advertencia: m no es primo ni potencia de 2. El período no será máximo.');
                 }
@@ -535,7 +562,7 @@
 
             params = { tipo, x0: Number(x0), a: Number(a), m: Number(m), c: Number(c) };
 
-            const clasif = getBinaryDecimalClassification(Number(m));
+            const clasif = getBinaryDecimalClassification(Number(m), tipo);
 
             sequence = [Number(x0)];
             const seen = new Set([Number(x0)]);
@@ -652,7 +679,7 @@
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            const clasif = getBinaryDecimalClassification(params.m);
+            const clasif = getBinaryDecimalClassification(params.m, params.tipo);
 
             const paramsData = [
                 ['Tipo de Algoritmo', params.tipo === 'mixto' ? 'Mixto' : 'Multiplicativo'],
